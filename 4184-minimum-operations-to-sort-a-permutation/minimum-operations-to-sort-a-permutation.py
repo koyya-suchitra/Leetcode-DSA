@@ -1,20 +1,27 @@
-from typing import List
-
 class Solution:
     def minOperations(self, nums: List[int]) -> int:
         n = len(nums)
-        if n == 0:
-            return -1
-        res = float('inf')
-        target = list(range(n))
-        k = nums.index(0)
-        if nums[k:] + nums[:k] == target:
-            res = min(res, k, n - k + 2)
-        rev_nums = nums[::-1]
-        k_rev = rev_nums.index(0)
-        if rev_nums[k_rev:] + rev_nums[:k_rev] == target:
-            res = min(res, k_rev + 1, n - k_rev + 1)
-        if res == float('inf'):
-            return -1
-        
-        return int(res)
+
+        zero = nums.index(0)
+
+        def check(step: int) -> bool:
+            for i in range(1, n):
+                prev = (zero + (i - 1) * step) % n
+                curr = (zero + i * step) % n
+
+                if nums[prev] > nums[curr]:
+                    return False
+
+            return True
+
+        ans = inf
+
+        if check(1):
+            ans = min(ans, zero)
+            ans = min(ans, n - zero + 2)
+
+        if check(-1):
+            ans = min(ans, zero + 2)
+            ans = min(ans, n - zero)
+
+        return -1 if ans == inf else ans
